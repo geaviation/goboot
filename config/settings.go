@@ -133,15 +133,11 @@ func (s Settings) GetStringEnv(key string, name ...string) string {
 	t := s.GetEnv(key, name...)
 
 	switch t.(type) {
-	case map[string]interface{}:
-	case []interface{}:
 	case string:
 		return t.(string)
 	case nil:
 		return ""
-	case int:
 	case float64:
-	case bool:
 	default:
 	}
 
@@ -169,17 +165,32 @@ func (s Settings) GetIntEnv(key string, name ...string) int {
 	return 0
 }
 
-func traverse(name []string, m map[string]interface{}) interface{} {
+func traverse(name []string, t interface{}) interface{} {
+	var next = func() interface{} {
+		switch t.(type) {
+		case []interface{}:
+			idx, err := strconv.Atoi(name[0])
+			if err == nil {
+				return t.([]interface{})[idx]
+			}
+		case map[string]interface{}:
+			return t.(map[string]interface{})[name[0]]
+		}
+		return nil
+	}
+
 	switch len(name) {
 	case 0:
-		return m
+		return t
 	case 1:
-		return m[name[0]]
+		return next()
 	default:
-		v := m[name[0]]
+		v := next()
 		switch v.(type) {
+		case []interface{}:
+			return traverse(name[1:], v)
 		case map[string]interface{}:
-			return traverse(name[1:], v.(map[string]interface{}))
+			return traverse(name[1:], v)
 		}
 	}
 
