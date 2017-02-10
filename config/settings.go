@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// Package config provides Settings struct for accessing Predix environment variables.
+// Package config provides Settings interface for accessing Predix environment variables.
 // The values can be boolean, number, string, or JSON object.
 //
 // An example shell script for defining and setting a json as value is given here.
@@ -47,113 +47,94 @@ type Settings struct {
 	sync.Mutex
 }
 
-func (s Settings) String() string {
-	return fmt.Sprintf("%s", s.cache)
+func (r Settings) String() string {
+	return fmt.Sprintf("%s", r.cache)
 }
 
-func (s Settings) getEnv(name string) interface{} {
-	s.Lock()
-	defer s.Unlock()
+func (r Settings) getEnv(name string) interface{} {
+	r.Lock()
+	defer r.Unlock()
 
 	key := "env_" + name
 
 	var t interface{}
 	var ok bool
-	if t, ok = s.cache[key]; ok {
+	if t, ok = r.cache[key]; ok {
 		return t
 	}
 
 	v := os.Getenv(name)
 	if err := json.Unmarshal([]byte(v), &t); err != nil {
-		s.cache[key] = v
+		r.cache[key] = v
 		return v
 	}
-	s.cache[key] = t
+	r.cache[key] = t
 	return t
 }
 
-func (s Settings) getUriByName(name string) string {
-	s.Lock()
-	defer s.Unlock()
+func (r Settings) getService(name string) interface{} {
+	r.Lock()
+	defer r.Unlock()
 
-	key := "name_" + name
-
-	var t interface{}
-	var ok bool
-	if t, ok = s.cache[key]; ok {
-		return t.(string)
-	}
-
-	svc, err := s.Env.Services.WithName(name)
-	if err != nil {
-		t = ""
-	} else {
-
-		t = svc.Credentials["uri"].(string)
-	}
-	s.cache[key] = t
-
-	return t.(string)
-}
-
-func (s Settings) getUriByLabel(label string) string {
-	s.Lock()
-	defer s.Unlock()
-
-	key := "label_" + label
+	key := "service_" + name
 
 	var t interface{}
 	var ok bool
-	if t, ok = s.cache[key]; ok {
-		return t.(string)
+	if t, ok = r.cache[key]; ok {
+		return t
 	}
 
-	svc, err := s.Env.Services.WithLabel(label)
+	s, err := r.Env.Services.WithName(name)
 	if err != nil {
-		t = ""
+		ss, err := r.Env.Services.WithLabel(name)
+		if err != nil {
+			t = nil
+		} else {
+
+			t = ss[0]
+		}
 	} else {
 
-		t = svc[0].Credentials["uri"].(string)
+		t = *s
 	}
-	s.cache[key] = t
+	r.cache[key] = t
 
-	return t.(string)
+	return t
 }
 
-func (s Settings) getUri(labels []string, name ...string) string {
-	if len(name) != 0 {
-		return s.getUriByName(name[0])
-	}
-
-	for _, label := range labels {
-		uri := s.getUriByLabel(label)
-		if uri != "" {
-			return uri
+// GetService looks up by name and then by label and returns the service
+// from VCAP_SERVICES environment variable
+func (r Settings) GetService(names ...string) interface{} {
+	for _, name := range names {
+		s := r.getService(name)
+		if s != nil {
+			return s
 		}
 	}
 
-	return ""
+	return nil
 }
 
-func (s Settings) PostgresUri(name ...string) string {
-	labels := []string{"postgres"}
-	return s.getUri(labels, name ...)
+func (r Settings) PostgresUri() string {
+	a := []string{"postgres"}
+	return r.ServiceUri(a...)
 }
 
-func (s Settings) RabbitmqUri(name ...string) string {
-	labels := []string{"rabbitmq-36", "p-rabbitmq-35"}
-	return s.getUri(labels, name ...)
+func (r Settings) RabbitmqUri() string {
+	a := []string{"rabbitmq-36", "p-rabbitmq-35"}
+	return r.ServiceUri(a...)
 }
 
-func (s Settings) ServiceUri(name ...string) string {
-	labels := name
-	return s.getUri(labels, name ...)
+// ServiceUri looks up by name and then by label and returns service uri
+// from the VCAP_SERVICES environment variable
+func (r Settings) ServiceUri(names ...string) string {
+	return r.GetService(names...).(cfenv.Service).Credentials["uri"].(string)
 }
 
 // GetEnv returns env value for the given name.
 // If the value is JSON and path is provided, return the part specified.
-func (s Settings) GetEnv(name string, path ...string) interface{} {
-	v := s.getEnv(name)
+func (r Settings) GetEnv(name string, path ...string) interface{} {
+	v := r.getEnv(name)
 	if len(path) == 0 {
 		return v
 	}
@@ -163,8 +144,8 @@ func (s Settings) GetEnv(name string, path ...string) interface{} {
 
 // GetEnv returns env string value for the given name.
 // If the value is JSON and path is provided, return the part specified.
-func (s Settings) GetStringEnv(name string, path ...string) string {
-	t := s.GetEnv(name, path...)
+func (r Settings) GetStringEnv(name string, path ...string) string {
+	t := r.GetEnv(name, path...)
 
 	switch t.(type) {
 	case string:
@@ -180,8 +161,8 @@ func (s Settings) GetStringEnv(name string, path ...string) string {
 
 // GetEnv returns env boolean value for the given name.
 // If the value is JSON and path is provided, return the part specified.
-func (s Settings) GetBoolEnv(name string, path ...string) bool {
-	t := s.GetEnv(name, path...)
+func (r Settings) GetBoolEnv(name string, path ...string) bool {
+	t := r.GetEnv(name, path...)
 
 	b, err := strconv.ParseBool(fmt.Sprintf("%v", t))
 	if err == nil {
@@ -192,8 +173,8 @@ func (s Settings) GetBoolEnv(name string, path ...string) bool {
 
 // GetEnv returns env int value for the given name.
 // If the value is JSON and path is provided, return the part specified.
-func (s Settings) GetIntEnv(name string, path ...string) int {
-	t := s.GetEnv(name, path...)
+func (r Settings) GetIntEnv(name string, path ...string) int {
+	t := r.GetEnv(name, path...)
 
 	i, err := strconv.Atoi(fmt.Sprintf("%v", t))
 	if err == nil {
