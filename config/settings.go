@@ -1,3 +1,33 @@
+// Copyright 2017 The Goboot Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
+// Package config provides Settings struct for accessing Predix environment variables.
+// The values can be boolean, number, string, or JSON object.
+//
+// An example shell script for defining and setting a json as value is given here.
+// you can read the JSON or any part of it by providing the environment name as key and
+// the list of object names and array indexes as the path to the value.
+//
+// e.g. for MY_ENV defined below, Settings.GetEnv("MY_ENV", "array", "1") will return "b"
+//
+//   #!/usr/bin/env bash
+//   #
+//   function define(){
+//     IFS='\n' read -r -d '' ${1} || true;
+//   }
+//   #
+//   export value="this is a value"
+//   #
+//   define MY_ENV << JSON
+//   {
+//   "home": "$HOME",
+//   "array": ["a", "b", "c"],
+//   "pwd": "`pwd`"
+//   }
+//   JSON
+//   #
+//   export MY_ENV
 package config
 
 import (
@@ -120,17 +150,21 @@ func (s Settings) ServiceUri(name ...string) string {
 	return s.getUri(labels, name ...)
 }
 
-func (s Settings) GetEnv(key string, name ...string) interface{} {
-	v := s.getEnv(key)
-	if len(name) == 0 {
+// GetEnv returns env value for the given name.
+// If the value is JSON and path is provided, return the part specified.
+func (s Settings) GetEnv(name string, path ...string) interface{} {
+	v := s.getEnv(name)
+	if len(path) == 0 {
 		return v
 	}
 
-	return traverse(name, v.(map[string]interface{}))
+	return traverse(path, v.(map[string]interface{}))
 }
 
-func (s Settings) GetStringEnv(key string, name ...string) string {
-	t := s.GetEnv(key, name...)
+// GetEnv returns env string value for the given name.
+// If the value is JSON and path is provided, return the part specified.
+func (s Settings) GetStringEnv(name string, path ...string) string {
+	t := s.GetEnv(name, path...)
 
 	switch t.(type) {
 	case string:
@@ -144,8 +178,10 @@ func (s Settings) GetStringEnv(key string, name ...string) string {
 	return fmt.Sprintf("%v", t)
 }
 
-func (s Settings) GetBoolEnv(key string, name ...string) bool {
-	t := s.GetEnv(key, name...)
+// GetEnv returns env boolean value for the given name.
+// If the value is JSON and path is provided, return the part specified.
+func (s Settings) GetBoolEnv(name string, path ...string) bool {
+	t := s.GetEnv(name, path...)
 
 	b, err := strconv.ParseBool(fmt.Sprintf("%v", t))
 	if err == nil {
@@ -154,8 +190,10 @@ func (s Settings) GetBoolEnv(key string, name ...string) bool {
 	return false
 }
 
-func (s Settings) GetIntEnv(key string, name ...string) int {
-	t := s.GetEnv(key, name...)
+// GetEnv returns env int value for the given name.
+// If the value is JSON and path is provided, return the part specified.
+func (s Settings) GetIntEnv(name string, path ...string) int {
+	t := s.GetEnv(name, path...)
 
 	i, err := strconv.Atoi(fmt.Sprintf("%v", t))
 	if err == nil {
@@ -165,21 +203,21 @@ func (s Settings) GetIntEnv(key string, name ...string) int {
 	return 0
 }
 
-func traverse(name []string, t interface{}) interface{} {
+func traverse(path []string, t interface{}) interface{} {
 	var next = func() interface{} {
 		switch t.(type) {
 		case []interface{}:
-			idx, err := strconv.Atoi(name[0])
+			idx, err := strconv.Atoi(path[0])
 			if err == nil {
 				return t.([]interface{})[idx]
 			}
 		case map[string]interface{}:
-			return t.(map[string]interface{})[name[0]]
+			return t.(map[string]interface{})[path[0]]
 		}
 		return nil
 	}
 
-	switch len(name) {
+	switch len(path) {
 	case 0:
 		return t
 	case 1:
@@ -188,9 +226,9 @@ func traverse(name []string, t interface{}) interface{} {
 		v := next()
 		switch v.(type) {
 		case []interface{}:
-			return traverse(name[1:], v)
+			return traverse(path[1:], v)
 		case map[string]interface{}:
-			return traverse(name[1:], v)
+			return traverse(path[1:], v)
 		}
 	}
 
