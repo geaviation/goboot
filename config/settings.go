@@ -135,11 +135,14 @@ func (r Settings) ServiceUri(names ...string) string {
 // If the value is JSON and path is provided, return the part specified.
 func (r Settings) GetEnv(name string, path ...string) interface{} {
 	v := r.getEnv(name)
-	if len(path) == 0 {
+	if v == nil || len(path) == 0 {
 		return v
 	}
-
-	return traverse(path, v.(map[string]interface{}))
+	m, ok := v.(map[string]interface{})
+	if !ok || m == nil {
+		return nil
+	}
+	return traverse(path, m)
 }
 
 // GetEnv returns env string value for the given name.
@@ -216,13 +219,19 @@ func traverse(path []string, t interface{}) interface{} {
 	return nil
 }
 
-func NewSettings() Settings {
-	var s Settings
+func NewSettings() *Settings {
 	env, _ := cfenv.Current()
 
-	s = Settings{
+	return &Settings{
 		Env: env,
 		cache: make(map[string]interface{}),
 	}
-	return s
+}
+
+var (
+	settings = NewSettings()
+)
+
+func AppSettings() *Settings {
+	return settings
 }
