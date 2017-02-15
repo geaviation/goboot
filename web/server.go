@@ -18,7 +18,7 @@ type AppContext struct {
 }
 
 type BasicServer struct {
-	ctx *AppContext
+	Ctx *AppContext
 }
 
 var log = logging.ContextLogger
@@ -32,12 +32,12 @@ func createAppContext() *AppContext {
 	return &ctx
 }
 
-func currentTimestamp() int64 {
+func CurrentTimestamp() int64 {
 	return time.Now().UnixNano() / (int64(time.Millisecond) / int64(time.Nanosecond))
 }
 
-func (r *BasicServer) port() string {
-	port := r.ctx.Env.GetStringEnv("PORT")
+func (r *BasicServer) Port() string {
+	port := r.Ctx.Env.GetStringEnv("PORT")
 	if port == "" {
 		port = "8080"
 	}
@@ -45,9 +45,9 @@ func (r *BasicServer) port() string {
 }
 
 func (r *BasicServer) Serve(ctx *AppContext) {
-	r.ctx = ctx
+	r.Ctx = ctx
 
-	port := r.port()
+	port := r.Port()
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", r.home)
@@ -59,16 +59,16 @@ func (r *BasicServer) Serve(ctx *AppContext) {
 
 func (r *BasicServer) home(res http.ResponseWriter, req *http.Request) {
 	type message struct {
-		Server      string `json:"server"`
+		Server    string `json:"server"`
 		Name      string `json:"name"`
 		Version   string `json:"version"`
 		Build     string `json:"build"`
 		Timestamp int64 `json:"timestamp"`
 	}
-	n := r.ctx.Env.GetStringEnv("VCAP_APPLICATION", "name")
-	v := r.ctx.Env.GetStringEnv("VCAP_APPLICATION", "version")
-	b := r.ctx.Env.GetStringEnv("build")
-	t := currentTimestamp()
+	n := r.Ctx.Env.GetStringEnv("VCAP_APPLICATION", "name")
+	v := r.Ctx.Env.GetStringEnv("VCAP_APPLICATION", "version")
+	b := r.Ctx.Env.GetStringEnv("build")
+	t := CurrentTimestamp()
 	m := &message{Server: "basic", Name: n, Version: v, Build: b, Timestamp: t}
 
 	r.Handle(m, res, req)
