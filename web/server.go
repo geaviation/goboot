@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
+	"github.com/tylerb/graceful"
 )
 
 type Server interface {
@@ -49,17 +50,28 @@ func (r *BasicServer) Port() string {
 func (r *BasicServer) Serve(ctx *AppContext) {
 	r.Ctx = ctx
 
-	port := r.Port()
-
-	//
 	if r.Router == nil {
 		r.Router = http.NewServeMux()
 		r.Router.HandleFunc("/", r.home)
 	}
 
+	r.Start(r.Router)
+}
+
+func (r *BasicServer) Start(handler *http.ServeMux) {
+	port := r.Port()
+
+	server := &graceful.Server{
+		Timeout: 10 * time.Second,
+		Server: &http.Server{
+			Addr:    ":" + port,
+			Handler: handler,
+		},
+	}
+
 	log.Infof("Server listening on port: %s", port)
 
-	log.Fatal(http.ListenAndServe(":" + port, r.Router))
+	log.Fatal(server.ListenAndServe())
 }
 
 func (r *BasicServer) home(res http.ResponseWriter, req *http.Request) {
