@@ -9,6 +9,8 @@ import (
 
 type GorillaServer struct {
 	web.BasicServer
+
+	Router *mux.Router
 }
 
 var log = logging.ContextLogger
@@ -18,13 +20,13 @@ func (r *GorillaServer) Serve(ctx *web.AppContext) {
 
 	port := r.Port()
 
-	mux := mux.NewRouter()
+	r.Router = mux.NewRouter()
 
-	mux.HandleFunc("/", r.home)
+	r.Router.HandleFunc("/", r.home)
 
 	log.Infof("Server listening on port: %s", port)
 
-	http.ListenAndServe(":" + port, mux)
+	log.Fatal(http.ListenAndServe(":" + port, r.Router))
 }
 
 func (r *GorillaServer) home(res http.ResponseWriter, req *http.Request) {

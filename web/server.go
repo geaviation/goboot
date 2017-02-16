@@ -18,7 +18,9 @@ type AppContext struct {
 }
 
 type BasicServer struct {
-	Ctx *AppContext
+	Ctx    *AppContext
+
+	Router *http.ServeMux
 }
 
 var log = logging.ContextLogger
@@ -49,12 +51,13 @@ func (r *BasicServer) Serve(ctx *AppContext) {
 
 	port := r.Port()
 
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", r.home)
+	r.Router = http.NewServeMux()
+
+	r.Router.HandleFunc("/", r.home)
 
 	log.Infof("Server listening on port: %s", port)
 
-	http.ListenAndServe(":" + port, mux)
+	log.Fatal(http.ListenAndServe(":" + port, r.Router))
 }
 
 func (r *BasicServer) home(res http.ResponseWriter, req *http.Request) {
@@ -75,6 +78,10 @@ func (r *BasicServer) home(res http.ResponseWriter, req *http.Request) {
 }
 
 func (r *BasicServer) Handle(m interface{}, res http.ResponseWriter, req *http.Request) {
+	Handle(m, res, req)
+}
+
+func Handle(m interface{}, res http.ResponseWriter, req *http.Request) {
 	defer func() {
 		if r := recover(); r != nil {
 			res.WriteHeader(http.StatusInternalServerError)
