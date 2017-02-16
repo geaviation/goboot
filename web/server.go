@@ -51,9 +51,11 @@ func (r *BasicServer) Serve(ctx *AppContext) {
 
 	port := r.Port()
 
-	r.Router = http.NewServeMux()
-
-	r.Router.HandleFunc("/", r.home)
+	//
+	if r.Router == nil {
+		r.Router = http.NewServeMux()
+		r.Router.HandleFunc("/", r.home)
+	}
 
 	log.Infof("Server listening on port: %s", port)
 
@@ -96,8 +98,12 @@ func Handle(m interface{}, res http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(res, string(b))
 }
 
-func NewBasicServer() Server {
-	return &BasicServer{}
+func NewBasicServer(router ...*http.ServeMux) Server {
+	if len(router) == 0 {
+		return &BasicServer{Router: nil}
+	} else {
+		return &BasicServer{Router: router[0]}
+	}
 }
 
 func Run(s ...Server) {

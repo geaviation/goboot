@@ -20,9 +20,11 @@ func (r *GorillaServer) Serve(ctx *web.AppContext) {
 
 	port := r.Port()
 
-	r.Router = mux.NewRouter()
-
-	r.Router.HandleFunc("/", r.home)
+	//
+	if r.Router == nil {
+		r.Router = mux.NewRouter()
+		r.Router.HandleFunc("/", r.home)
+	}
 
 	log.Infof("Server listening on port: %s", port)
 
@@ -46,6 +48,10 @@ func (r *GorillaServer) home(res http.ResponseWriter, req *http.Request) {
 	r.Handle(m, res, req)
 }
 
-func NewGorillaServer() web.Server {
-	return &GorillaServer{}
+func NewGorillaServer(router ...*mux.Router) web.Server {
+	if len(router) == 0 {
+		return &GorillaServer{Router: nil}
+	} else {
+		return &GorillaServer{Router: router[0]}
+	}
 }
