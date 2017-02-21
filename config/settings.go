@@ -187,6 +187,10 @@ func (r Settings) GetIntEnv(name string, path ...string) int {
 	return 0
 }
 
+func (r Settings) Parse(v interface{}) error {
+	return parse(v)
+}
+
 func traverse(path []string, t interface{}) interface{} {
 	var next = func() interface{} {
 		switch t.(type) {
