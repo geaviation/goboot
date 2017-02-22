@@ -20,6 +20,10 @@ func osGetenv(key string) string {
 	return settings.GetStringEnv(p[0], p[1:]...)
 }
 
+func Parse(v interface{}) error {
+	return parse(v)
+}
+
 var (
 	// ErrNotAStructPtr is returned if you pass something that is not a pointer to a
 	// Struct to Parse

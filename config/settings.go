@@ -54,6 +54,9 @@ func (r Settings) String() string {
 func (r Settings) getEnv(name string) interface{} {
 	r.Lock()
 	defer r.Unlock()
+	if !enableCache {
+		return os.Getenv(name)
+	}
 
 	key := "env_" + name
 
@@ -234,6 +237,7 @@ func NewSettings() *Settings {
 
 var (
 	settings = NewSettings()
+	enableCache = true // set to false for testing
 )
 
 func AppSettings() *Settings {

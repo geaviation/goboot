@@ -29,28 +29,28 @@ const (
 var settings = config.AppSettings()
 var log = logging.ContextLogger
 
-type jsonEnv struct {
+type NewRelicEnv struct {
 	Enable  bool          `env:"goboot_newrelic.enable"`
 	Name    string        `env:"goboot_newrelic.name"`
 	License string        `env:"goboot_newrelic.license"`
 }
 
 func init() {
-	env := jsonEnv{}
+	env := NewRelicEnv{}
 
 	err := settings.Parse(&env)
 	if err != nil {
-		log.Info("NewRelic goboot_newrelic env not set, NewRelic will be disabled")
+		log.Errorf("NewRelic init error: %v", err)
 		return
 	}
 
-	log.Debugf("NewRelic goboot_newrelic.enable: ", env.Enable)
+	log.Debugf("NewRelic goboot_newrelic.enable: %v", env.Enable)
 	if !env.Enable {
 		return
 	}
 
 	name := env.Name
-	log.Debugf("NewRelic goboot_newrelic.name: ", name)
+	log.Debugf("NewRelic goboot_newrelic.name: %v", name)
 	if name == "" {
 		name = settings.GetStringEnv("VCAP_APPLICATION", "application_name")
 		log.Debugf("NewRelic app name read from VCAP_APPLICATION: ", name)
@@ -64,7 +64,7 @@ func init() {
 		return
 	}
 
-	log.Debugf("NewRelic Application Name: %s,  enabled %v: ", name, env.Enable)
+	log.Debugf("NewRelic Application Name: %s  enabled %v: ", name, env.Enable)
 }
 
 var (
