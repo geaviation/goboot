@@ -39,10 +39,6 @@ func HandlerAdapter(handler func(http.ResponseWriter, *http.Request)) restful.Ro
 	}
 }
 
-//func hello(req *restful.Request, resp *restful.Response) {
-//	io.WriteString(resp, "world")
-//}
-
 func (r *RestfulServer) home(res http.ResponseWriter, req *http.Request) {
 	type message struct {
 		Server    string `json:"server"`
