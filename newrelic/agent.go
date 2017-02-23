@@ -18,6 +18,9 @@ import (
 	"github.com/newrelic/go-agent"
 	"net/http"
 	"strings"
+	"reflect"
+	"runtime"
+	"fmt"
 )
 
 const (
@@ -72,7 +75,7 @@ var (
 	Config newrelic.Config
 )
 
-func HandlerAdapter(handler func(http.ResponseWriter, *http.Request), name...string) func(http.ResponseWriter, *http.Request) {
+func HandleFuncAdapter(handler func(http.ResponseWriter, *http.Request), name...string) func(http.ResponseWriter, *http.Request) {
 	var defaultName string
 	if len(name) == 0 {
 		defaultName = ""
@@ -91,4 +94,48 @@ func HandlerAdapter(handler func(http.ResponseWriter, *http.Request), name...str
 
 		handler(res, req)
 	}
+}
+
+func funcAdapter(fn func(), name...string) func() (err error) {
+	var defaultName string
+	if len(name) == 0 {
+		defaultName = ""
+	} else {
+		defaultName = strings.Join(name, "/")
+	}
+	return func() (err error) {
+		var txn newrelic.Transaction
+		if Application != nil {
+			var pattern = defaultName
+			if pattern == "" {
+				pattern = nameOf(fn)
+			}
+			txn = Application.StartTransaction(pattern, nil, nil)
+			defer txn.End()
+			defer func() {
+				if r := recover(); r != nil {
+					err = fmt.Errorf("Error: %s", r)
+					txn.NoticeError(err)
+				}
+			}()
+		}
+
+		fn()
+
+		return
+	}
+}
+
+func nameOf(f interface{}) string {
+	v := reflect.ValueOf(f)
+	if v.Kind() == reflect.Func {
+		if r := runtime.FuncForPC(v.Pointer()); r != nil {
+			return r.Name()
+		}
+	}
+	return v.String()
+}
+
+func Trace(fn func(), name...string) {
+	funcAdapter(fn, name...)()
 }
