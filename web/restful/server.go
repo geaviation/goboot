@@ -15,9 +15,7 @@ type RestfulServer struct {
 
 var log = logging.ContextLogger
 
-func (r *RestfulServer) Serve(ctx *web.AppContext) {
-	r.Ctx = ctx
-
+func (r *RestfulServer) Serve() {
 	port := r.Port()
 
 	//
@@ -56,11 +54,13 @@ func (r *RestfulServer) home(res http.ResponseWriter, req *http.Request) {
 	r.Handle(m, res, req)
 }
 
-func NewRestfulServer(router ...*restful.WebService) web.Server {
+func NewRestfulServer(router ...*restful.WebService) *RestfulServer {
+	ctx := web.CreateAppContext()
+
 	if len(router) == 0 {
-		return &RestfulServer{Router: nil}
+		return &RestfulServer{BasicServer: web.BasicServer{Ctx: ctx}, Router: nil}
 	} else {
-		return &RestfulServer{Router: router[0]}
+		return &RestfulServer{BasicServer: web.BasicServer{Ctx: ctx}, Router: router[0]}
 	}
 }
 

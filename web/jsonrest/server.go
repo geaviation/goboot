@@ -16,9 +16,7 @@ type JsonRestServer struct {
 
 var log = logging.ContextLogger
 
-func (r *JsonRestServer) Serve(ctx *web.AppContext) {
-	r.Ctx = ctx
-
+func (r *JsonRestServer) Serve() {
 	port := r.Port()
 
 	//
@@ -66,10 +64,12 @@ func (r *JsonRestServer) home(res http.ResponseWriter, req *http.Request) {
 	res.(rest.ResponseWriter).WriteJson(m)
 }
 
-func NewJsonRestServer(router ...rest.App) web.Server {
+func NewJsonRestServer(router ...rest.App) *JsonRestServer {
+	ctx := web.CreateAppContext()
+
 	if len(router) == 0 {
-		return &JsonRestServer{Api: rest.NewApi(), Router: nil}
+		return &JsonRestServer{BasicServer: web.BasicServer{Ctx: ctx}, Api: rest.NewApi(), Router: nil}
 	} else {
-		return &JsonRestServer{Api: rest.NewApi(), Router: router[0]}
+		return &JsonRestServer{BasicServer: web.BasicServer{Ctx: ctx}, Api: rest.NewApi(), Router: router[0]}
 	}
 }

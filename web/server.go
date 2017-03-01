@@ -11,7 +11,7 @@ import (
 )
 
 type Server interface {
-	Serve(ctx *AppContext)
+	Serve()
 }
 
 type AppContext struct {
@@ -26,7 +26,7 @@ type BasicServer struct {
 
 var log = logging.ContextLogger
 
-func createAppContext() *AppContext {
+func CreateAppContext() *AppContext {
 	p := config.NewSettings()
 
 	ctx := AppContext{
@@ -47,25 +47,23 @@ func (r *BasicServer) Port() string {
 	return port
 }
 
-func (r *BasicServer) Serve(ctx *AppContext) {
-	r.Ctx = ctx
-
+func (r *BasicServer) Serve() {
 	if r.Router == nil {
 		r.Router = http.NewServeMux()
 		r.Router.HandleFunc("/", r.home)
 	}
 
-	r.Start(r.Router)
+	r.Start()
 }
 
-func (r *BasicServer) Start(handler *http.ServeMux) {
+func (r *BasicServer) Start() {
 	port := r.Port()
 
 	server := &graceful.Server{
 		Timeout: 10 * time.Second,
 		Server: &http.Server{
 			Addr:    ":" + port,
-			Handler: handler,
+			Handler: r.Router,
 		},
 	}
 
@@ -110,22 +108,22 @@ func Handle(m interface{}, res http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(res, string(b))
 }
 
-func NewBasicServer(router ...*http.ServeMux) Server {
+func NewBasicServer(router ...*http.ServeMux) *BasicServer {
+	ctx := CreateAppContext()
+
 	if len(router) == 0 {
-		return &BasicServer{Router: nil}
+		return &BasicServer{Ctx: ctx, Router: nil}
 	} else {
-		return &BasicServer{Router: router[0]}
+		return &BasicServer{Ctx: ctx, Router: router[0]}
 	}
 }
 
 func Run(s ...Server) {
-	ctx := createAppContext()
-
 	if len(s) == 0 {
 		bs := NewBasicServer()
-		bs.Serve(ctx)
+		bs.Serve()
 	} else {
-		s[0].Serve(ctx)
+		s[0].Serve()
 	}
 
 	log.Error("Server exiting.")

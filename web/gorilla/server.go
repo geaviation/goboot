@@ -15,9 +15,7 @@ type GorillaServer struct {
 
 var log = logging.ContextLogger
 
-func (r *GorillaServer) Serve(ctx *web.AppContext) {
-	r.Ctx = ctx
-
+func (r *GorillaServer) Serve() {
 	port := r.Port()
 
 	//
@@ -48,10 +46,12 @@ func (r *GorillaServer) home(res http.ResponseWriter, req *http.Request) {
 	r.Handle(m, res, req)
 }
 
-func NewGorillaServer(router ...*mux.Router) web.Server {
+func NewGorillaServer(router ...*mux.Router) *GorillaServer {
+	ctx := web.CreateAppContext()
+
 	if len(router) == 0 {
-		return &GorillaServer{Router: nil}
+		return &GorillaServer{BasicServer: web.BasicServer{Ctx: ctx}, Router: nil}
 	} else {
-		return &GorillaServer{Router: router[0]}
+		return &GorillaServer{BasicServer: web.BasicServer{Ctx: ctx}, Router: router[0]}
 	}
 }
