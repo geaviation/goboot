@@ -43,7 +43,7 @@ func (r *GorillaServer) home(res http.ResponseWriter, req *http.Request) {
 	t := web.CurrentTimestamp()
 	m := &message{Server: "gorilla", Name: n, Version: v, Build: b, Timestamp: t}
 
-	r.Handle(m, res, req)
+	r.HandleJson(m, res, req)
 }
 
 func NewGorillaServer(router ...*mux.Router) *GorillaServer {

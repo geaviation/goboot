@@ -51,7 +51,7 @@ func (r *RestfulServer) home(res http.ResponseWriter, req *http.Request) {
 	t := web.CurrentTimestamp()
 	m := &message{Server: "restful", Name: n, Version: v, Build: b, Timestamp: t}
 
-	r.Handle(m, res, req)
+	r.HandleJson(m, res, req)
 }
 
 func NewRestfulServer(router ...*restful.WebService) *RestfulServer {

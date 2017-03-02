@@ -24,6 +24,20 @@ type BasicServer struct {
 	Router *http.ServeMux
 }
 
+var ContentType = struct {
+	JSON string
+	HTML string
+	JS   string
+	CSS  string
+	BIN  string
+}{
+	JSON: "application/json",
+	HTML: "text/html",
+	JS:   "application/javascript",
+	CSS:  "text/css",
+	BIN:  "application/octet-stream",
+}
+
 var log = logging.ContextLogger
 
 func CreateAppContext() *AppContext {
@@ -86,14 +100,14 @@ func (r *BasicServer) home(res http.ResponseWriter, req *http.Request) {
 	t := CurrentTimestamp()
 	m := &message{Server: "basic", Name: n, Version: v, Build: b, Timestamp: t}
 
-	r.Handle(m, res, req)
+	r.HandleJson(m, res, req)
 }
 
-func (r *BasicServer) Handle(m interface{}, res http.ResponseWriter, req *http.Request) {
-	Handle(m, res, req)
+func (r *BasicServer) HandleJson(m interface{}, res http.ResponseWriter, req *http.Request) {
+	HandleJson(m, res, req)
 }
 
-func Handle(m interface{}, res http.ResponseWriter, req *http.Request) {
+func HandleJson(m interface{}, res http.ResponseWriter, req *http.Request) {
 	defer func() {
 		if r := recover(); r != nil {
 			res.WriteHeader(http.StatusInternalServerError)
@@ -101,7 +115,7 @@ func Handle(m interface{}, res http.ResponseWriter, req *http.Request) {
 		}
 	}()
 
-	res.Header().Set("Content-Type", "application/json")
+	res.Header().Set("Content-Type", ContentType.JSON)
 	res.WriteHeader(http.StatusOK)
 
 	b, _ := json.Marshal(m)
