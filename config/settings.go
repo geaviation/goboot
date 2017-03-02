@@ -109,6 +109,9 @@ func (r Settings) getService(name string) interface{} {
 // from VCAP_SERVICES environment variable
 func (r Settings) GetService(names ...string) interface{} {
 	for _, name := range names {
+		if name == "" {
+			continue
+		}
 		s := r.getService(name)
 		if s != nil {
 			return s
@@ -118,13 +121,13 @@ func (r Settings) GetService(names ...string) interface{} {
 	return nil
 }
 
-func (r Settings) PostgresUri() string {
-	a := []string{"postgres"}
+func (r Settings) PostgresUri(a ...string) string {
+	a = append(a, "postgres")
 	return r.ServiceUri(a...)
 }
 
-func (r Settings) RabbitmqUri() string {
-	a := []string{"rabbitmq-36", "p-rabbitmq-35"}
+func (r Settings) RabbitmqUri(a ...string) string {
+	a = append(a, "rabbitmq-36", "p-rabbitmq-35")
 	return r.ServiceUri(a...)
 }
 

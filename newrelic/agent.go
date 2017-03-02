@@ -23,12 +23,6 @@ import (
 	"fmt"
 )
 
-const (
-	goboot_newrelic string = "goboot_newrelic"
-	newrelic_appname = "name"
-	newrelic_license = "license"
-)
-
 var settings = config.AppSettings()
 var log = logging.ContextLogger
 
