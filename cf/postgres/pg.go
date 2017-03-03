@@ -72,6 +72,17 @@ func InitConnection(env PostgresEnv) *sql.DB {
 	return db
 }
 
+func Status() bool {
+	var version string
+	err := DB().QueryRow("select version()").Scan(&version)
+	if err != nil {
+		log.Error(err)
+		return false
+	}
+	log.Debugf("Postgres version: %s\n", version)
+	return true
+}
+
 func DB() *sql.DB {
 	return database
 }
