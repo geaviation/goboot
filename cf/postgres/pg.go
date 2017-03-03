@@ -5,10 +5,14 @@
 //
 // Setup optional env JSON value:
 // goboot_postgres={
-//   "name: "Your_Postgres_Service_Name",
+//   "name": "Your_Postgres_Service_Name",
 //   "connection": {
-//       max_open: 0
-//       max_idle: 0
+//       "max_open": 0,
+//       "max_idle": 0
+//   },
+//   "orm": {
+//       "enable": false,
+//       "show_sql": false
 //   }
 // }
 // See the following for connection settings:
@@ -34,6 +38,8 @@ type PostgresEnv struct {
 	Name         string     `env:"goboot_postgres.name"`
 	MaxOpenConns int        `env:"goboot_postgres.connection.max_open"`
 	MaxIdleConns int        `env:"goboot_postgres.connection.max_idle"`
+	ORMEnable    bool       `env:"goboot_postgres.orm.enable"`
+	ORMShowSQL   bool       `env:"goboot_postgres.orm.show_sql"`
 }
 
 func init() {
@@ -46,28 +52,32 @@ func init() {
 	}
 	log.Debugf("Postgres env: %v", env)
 
-	database = InitConnection(env)
+	if env.ORMEnable {
+		engine = InitORM(env)
+		database = engine.DB().DB
+	} else {
+		database = InitDB(env)
+	}
 }
 
-func maskUrlPassword(uri string) string {
+// mask password
+func maskedUrl(uri string) string {
 	u, _ := url.Parse(uri)
 	return fmt.Sprintf("%s://%s:***@%s%s?%s", u.Scheme, u.User.Username(), u.Host, u.Path, u.RawQuery)
 }
 
-func InitConnection(env PostgresEnv) *sql.DB {
+func InitDB(env PostgresEnv) *sql.DB {
 	uri := settings.PostgresUri(env.Name)
-	log.Infof("Postgres uri: %s", maskUrlPassword(uri))
-
-	var err error
+	log.Infof("Postgres init DB uri: %s", maskedUrl(uri))
 
 	db, err := sql.Open("postgres", uri)
 
 	if err != nil {
 		panic(err)
-	} else {
-		db.SetMaxOpenConns(env.MaxOpenConns)
-		db.SetMaxIdleConns(env.MaxIdleConns)
 	}
+
+	db.SetMaxOpenConns(env.MaxOpenConns)
+	db.SetMaxIdleConns(env.MaxIdleConns)
 
 	return db
 }
