@@ -26,7 +26,7 @@ import (
 )
 
 var settings = config.AppSettings()
-var log = logging.ContextLogger
+var log = logging.Logger()
 
 var database  *sql.DB
 

@@ -38,7 +38,7 @@ var ContentType = struct {
 	BIN:  "application/octet-stream",
 }
 
-var log = logging.ContextLogger
+var log = logging.Logger()
 
 func CreateAppContext() *AppContext {
 	p := config.NewSettings()

@@ -24,7 +24,7 @@ import (
 )
 
 var settings = config.AppSettings()
-var log = logging.ContextLogger
+var log = logging.Logger()
 
 type NewRelicEnv struct {
 	Enable  bool          `env:"goboot_newrelic.enable"`

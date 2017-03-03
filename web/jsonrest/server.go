@@ -14,7 +14,7 @@ type JsonRestServer struct {
 	Router rest.App
 }
 
-var log = logging.ContextLogger
+var log = logging.Logger()
 
 func (r *JsonRestServer) Serve() {
 	port := r.Port()

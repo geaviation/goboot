@@ -13,7 +13,7 @@ type RestfulServer struct {
 	Router *restful.WebService
 }
 
-var log = logging.ContextLogger
+var log = logging.Logger()
 
 func (r *RestfulServer) Serve() {
 	port := r.Port()

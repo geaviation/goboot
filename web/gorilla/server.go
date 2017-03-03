@@ -13,7 +13,7 @@ type GorillaServer struct {
 	Router *mux.Router
 }
 
-var log = logging.ContextLogger
+var log = logging.Logger()
 
 func (r *GorillaServer) Serve() {
 	port := r.Port()

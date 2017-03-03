@@ -18,7 +18,7 @@ import (
 	"github.com/geaviation/goboot/config"
 )
 
-var ContextLogger *logrus.Entry
+var contextLogger *logrus.Entry
 
 const goboot_logging string = "goboot_logging"
 
@@ -37,12 +37,12 @@ func init() {
 
 	//
 	app_name := settings.GetStringEnv("VCAP_APPLICATION", "application_name")
-	ContextLogger = logrus.WithFields(logrus.Fields{
+	contextLogger = logrus.WithFields(logrus.Fields{
 		"application_name": app_name,
 	})
 
 	//
-	ContextLogger.Infof("Logrus initialized. log level: %s", level)
+	contextLogger.Infof("Logrus initialized. log level: %s", level)
 }
 
 //default to debug if env not set
@@ -55,3 +55,6 @@ func logLevel() (level logrus.Level) {
 	return
 }
 
+func Logger() *logrus.Entry {
+	return contextLogger
+}
