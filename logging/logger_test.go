@@ -8,7 +8,7 @@ func TestLog(t *testing.T) {
 	//t.Skipf("skipping...")
 
 	//Logrus has six logging levels: Debug, Info, Warning, Error, Fatal and Panic.
-	var log = ContextLogger
+	var log = Logger()
 
 	log.Debug("Useful debugging information.")
 	log.Info("Something noteworthy happened!")
