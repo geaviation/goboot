@@ -130,6 +130,7 @@ func nameOf(f interface{}) string {
 	return v.String()
 }
 
-func Trace(fn func(), name...string) {
-	funcAdapter(fn, name...)()
+func Trace(fn func(), name...string) (err error) {
+	err = funcAdapter(fn, name...)()
+	return
 }
