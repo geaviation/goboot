@@ -6,10 +6,10 @@
 // Setup env JSON value:
 // goboot_elastic={
 //   "urls": [],
-//   "healthcheck: {
+//   "healthcheck": {
 //      "enable": false
 //   },
-//   "sniff: {
+//   "sniff": {
 //       "enable": false
 //       "scheme": "http"
 //    }
