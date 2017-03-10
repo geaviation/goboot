@@ -6,7 +6,7 @@ import (
 	"io"
 )
 
-func Upload(blob io.Reader, key string, contentType string) (r s3manager.UploadOutput, err error) {
+func Upload(blob io.Reader, key string, contentType string) (r *s3manager.UploadOutput, err error) {
 	uploader := s3manager.NewUploader(Session)
 	svc := uploader.S3.(*s3.S3)
 	svc.Handlers.Sign.Clear()
