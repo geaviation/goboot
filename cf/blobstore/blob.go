@@ -52,7 +52,8 @@ func initStore(env BlobstoreEnv) {
 	disableSSL := true
 	logLevel := aws.LogDebugWithRequestErrors
 
-	s := settings.GetService(env.Name).(cfenv.Service)
+	names := [...]string{env.Name, "predix-blobstore"}
+	s := settings.GetService(names).(cfenv.Service)
 	accessKeyID := s.Credentials["access_key_id"].(string)
 	secretAccessKey := s.Credentials["secret_access_key"].(string)
 	endpoint := s.Credentials["host"].(string)
