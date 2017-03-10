@@ -74,7 +74,7 @@ func InitDB(env PostgresEnv) *sql.DB {
 
 	if err != nil {
 		log.Error(err)
-		return
+		return nil
 	}
 
 	db.SetMaxOpenConns(env.MaxOpenConns)
