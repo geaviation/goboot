@@ -18,7 +18,8 @@ func InitORM(env PostgresEnv) *xorm.Engine {
 
 	eng, err := xorm.NewEngine("postgres", uri)
 	if err != nil {
-		panic(err)
+		log.Error(err)
+		return
 	}
 
 	eng.ShowSQL(env.ORMShowSQL)
