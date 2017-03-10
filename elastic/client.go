@@ -59,7 +59,8 @@ func initES(env ElasticEnv) *es.Client {
 
 	c, err := es.NewClient(options...)
 	if err != nil {
-		panic(err)
+		log.Error(err)
+		return nil
 	}
 
 	return c
