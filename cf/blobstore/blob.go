@@ -53,7 +53,7 @@ func initStore(env BlobstoreEnv) {
 	logLevel := aws.LogDebugWithRequestErrors
 
 	names := [...]string{env.Name, "predix-blobstore"}
-	s := settings.GetService(names).(cfenv.Service)
+	s := settings.GetService(names...).(cfenv.Service)
 	accessKeyID := s.Credentials["access_key_id"].(string)
 	secretAccessKey := s.Credentials["secret_access_key"].(string)
 	endpoint := s.Credentials["host"].(string)
