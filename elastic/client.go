@@ -17,8 +17,8 @@
 package elastic
 
 import (
-	"github.com/geaviation/goboot/config"
-	"github.com/geaviation/goboot/logging"
+	"github.com/gostones/goboot/config"
+	"github.com/gostones/goboot/logging"
 	es "gopkg.in/olivere/elastic.v3"
 )
 

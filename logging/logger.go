@@ -15,7 +15,7 @@ package logging
 import (
 	"os"
 	"github.com/Sirupsen/logrus"
-	"github.com/geaviation/goboot/config"
+	"github.com/gostones/goboot/config"
 )
 
 var contextLogger *logrus.Entry

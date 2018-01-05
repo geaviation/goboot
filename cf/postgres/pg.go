@@ -23,8 +23,8 @@ package postgres
 import (
 	"database/sql"
 	_ "github.com/lib/pq"
-	"github.com/geaviation/goboot/config"
-	"github.com/geaviation/goboot/logging"
+	"github.com/gostones/goboot/config"
+	"github.com/gostones/goboot/logging"
 	"net/url"
 	"fmt"
 )

@@ -3,8 +3,8 @@ package gorilla
 import (
 	"github.com/gorilla/mux"
 	"net/http"
-	"github.com/geaviation/goboot/logging"
-	"github.com/geaviation/goboot/web"
+	"github.com/gostones/goboot/logging"
+	"github.com/gostones/goboot/web"
 )
 
 type GorillaServer struct {

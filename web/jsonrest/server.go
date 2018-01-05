@@ -2,8 +2,8 @@ package jsonrest
 
 import (
 	"net/http"
-	"github.com/geaviation/goboot/logging"
-	"github.com/geaviation/goboot/web"
+	"github.com/gostones/goboot/logging"
+	"github.com/gostones/goboot/web"
 	"github.com/ant0ine/go-json-rest/rest"
 )
 

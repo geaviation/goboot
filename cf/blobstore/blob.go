@@ -10,8 +10,8 @@
 package blobstore
 
 import (
-	"github.com/geaviation/goboot/config"
-	"github.com/geaviation/goboot/logging"
+	"github.com/gostones/goboot/config"
+	"github.com/gostones/goboot/logging"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"

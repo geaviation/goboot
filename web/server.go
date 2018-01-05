@@ -2,8 +2,8 @@ package web
 
 import (
 	"net/http"
-	"github.com/geaviation/goboot/config"
-	"github.com/geaviation/goboot/logging"
+	"github.com/gostones/goboot/config"
+	"github.com/gostones/goboot/logging"
 	"encoding/json"
 	"fmt"
 	"time"
