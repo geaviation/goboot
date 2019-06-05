@@ -7,6 +7,7 @@ require (
 	github.com/aws/aws-sdk-go v1.19.44
 	github.com/cloudfoundry-community/go-cfenv v1.18.0
 	github.com/emicklei/go-restful v2.9.6+incompatible
+	github.com/garyburd/redigo v1.6.0
 	github.com/go-xorm/xorm v0.7.1
 	github.com/gorilla/mux v1.7.2
 	github.com/lib/pq v1.1.1

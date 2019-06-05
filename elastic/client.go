@@ -27,10 +27,10 @@ var log = logging.Logger()
 
 //TODO add more options?
 type ElasticEnv struct {
-	Urls              []string      `env:"goboot_elastic.urls"`
-	HealthcheckEnable bool          `env:"goboot_elastic.healthcheck.enable"`
-	SniffEnable       bool          `env:"goboot_elastic.sniff.enable"`
-	SniffScheme       string        `env:"goboot_elastic.sniff.scheme"`
+	Urls              []string `env:"goboot_elastic.urls"`
+	HealthcheckEnable bool     `env:"goboot_elastic.healthcheck.enable"`
+	SniffEnable       bool     `env:"goboot_elastic.sniff.enable"`
+	SniffScheme       string   `env:"goboot_elastic.sniff.scheme"`
 }
 
 var client *es.Client

@@ -1,10 +1,10 @@
 package jsonrest
 
 import (
-	"net/http"
+	"github.com/ant0ine/go-json-rest/rest"
 	"github.com/gostones/goboot/logging"
 	"github.com/gostones/goboot/web"
-	"github.com/ant0ine/go-json-rest/rest"
+	"net/http"
 )
 
 type JsonRestServer struct {
@@ -37,7 +37,7 @@ func (r *JsonRestServer) Serve() {
 
 	log.Infof("Server listening on port: %s", port)
 
-	log.Fatal(http.ListenAndServe(":" + port, r.Api.MakeHandler()))
+	log.Fatal(http.ListenAndServe(":"+port, r.Api.MakeHandler()))
 }
 
 func HandlerAdapter(handler func(http.ResponseWriter, *http.Request)) rest.HandlerFunc {
@@ -52,7 +52,7 @@ func (r *JsonRestServer) home(res http.ResponseWriter, req *http.Request) {
 		Name      string `json:"name"`
 		Version   string `json:"version"`
 		Build     string `json:"build"`
-		Timestamp int64 `json:"timestamp"`
+		Timestamp int64  `json:"timestamp"`
 	}
 	n := r.Ctx.Env.GetStringEnv("VCAP_APPLICATION", "name")
 	v := r.Ctx.Env.GetStringEnv("VCAP_APPLICATION", "version")

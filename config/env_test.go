@@ -2,10 +2,10 @@ package config
 
 import (
 	"fmt"
+	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
 	"time"
-	"github.com/stretchr/testify/assert"
 )
 
 type Config struct {
@@ -17,7 +17,7 @@ type Config struct {
 	Strings     []string      `env:"STRINGS"`
 	SepStrings  []string      `env:"SEPSTRINGS" envSeparator:":"`
 	Numbers     []int         `env:"NUMBERS"`
-	Numbers64   []int64         `env:"NUMBERS64"`
+	Numbers64   []int64       `env:"NUMBERS64"`
 	Bools       []bool        `env:"BOOLS"`
 	Duration    time.Duration `env:"DURATION"`
 	Float32     float32       `env:"FLOAT32"`

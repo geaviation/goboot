@@ -22,24 +22,24 @@ package postgres
 
 import (
 	"database/sql"
-	_ "github.com/lib/pq"
+	"fmt"
 	"github.com/gostones/goboot/config"
 	"github.com/gostones/goboot/logging"
+	_ "github.com/lib/pq"
 	"net/url"
-	"fmt"
 )
 
 var settings = config.AppSettings()
 var log = logging.Logger()
 
-var database  *sql.DB
+var database *sql.DB
 
 type PostgresEnv struct {
-	Name         string     `env:"goboot_postgres.name"`
-	MaxOpenConns int        `env:"goboot_postgres.connection.max_open"`
-	MaxIdleConns int        `env:"goboot_postgres.connection.max_idle"`
-	ORMEnable    bool       `env:"goboot_postgres.orm.enable"`
-	ORMShowSQL   bool       `env:"goboot_postgres.orm.show_sql"`
+	Name         string `env:"goboot_postgres.name"`
+	MaxOpenConns int    `env:"goboot_postgres.connection.max_open"`
+	MaxIdleConns int    `env:"goboot_postgres.connection.max_idle"`
+	ORMEnable    bool   `env:"goboot_postgres.orm.enable"`
+	ORMShowSQL   bool   `env:"goboot_postgres.orm.show_sql"`
 }
 
 func init() {

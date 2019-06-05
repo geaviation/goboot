@@ -1,13 +1,13 @@
 package web
 
 import (
-	"net/http"
-	"github.com/gostones/goboot/config"
-	"github.com/gostones/goboot/logging"
 	"encoding/json"
 	"fmt"
-	"time"
+	"github.com/gostones/goboot/config"
+	"github.com/gostones/goboot/logging"
 	"github.com/tylerb/graceful"
+	"net/http"
+	"time"
 )
 
 type Server interface {
@@ -19,7 +19,7 @@ type AppContext struct {
 }
 
 type BasicServer struct {
-	Ctx    *AppContext
+	Ctx *AppContext
 
 	Router *http.ServeMux
 }
@@ -92,7 +92,7 @@ func (r *BasicServer) home(res http.ResponseWriter, req *http.Request) {
 		Name      string `json:"name"`
 		Version   string `json:"version"`
 		Build     string `json:"build"`
-		Timestamp int64 `json:"timestamp"`
+		Timestamp int64  `json:"timestamp"`
 	}
 	n := r.Ctx.Env.GetStringEnv("VCAP_APPLICATION", "name")
 	v := r.Ctx.Env.GetStringEnv("VCAP_APPLICATION", "version")

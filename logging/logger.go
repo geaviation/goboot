@@ -13,9 +13,9 @@
 package logging
 
 import (
-	"os"
-	"github.com/sirupsen/logrus"
 	"github.com/gostones/goboot/config"
+	"github.com/sirupsen/logrus"
+	"os"
 )
 
 var contextLogger *logrus.Entry
@@ -49,7 +49,7 @@ func init() {
 func logLevel() (level logrus.Level) {
 	l := settings.GetStringEnv(goboot_logging, "level")
 	level, err := logrus.ParseLevel(l)
-	if (err != nil) {
+	if err != nil {
 		level = logrus.DebugLevel
 	}
 	return

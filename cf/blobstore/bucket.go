@@ -1,8 +1,8 @@
 package blobstore
 
 import (
-	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"io"
 )
 
@@ -13,9 +13,9 @@ func Upload(blob io.Reader, key string, contentType string) (r *s3manager.Upload
 	svc.Handlers.Sign.PushBack(SignV2)
 
 	r, err = uploader.Upload(&s3manager.UploadInput{
-		Body:   blob,
-		Bucket: &BucketName,
-		Key:    &key,
+		Body:        blob,
+		Bucket:      &BucketName,
+		Key:         &key,
 		ContentType: &contentType,
 	})
 
@@ -24,15 +24,15 @@ func Upload(blob io.Reader, key string, contentType string) (r *s3manager.Upload
 
 func Put(blob io.ReadSeeker, key string, contentType string) (r *s3.PutObjectOutput, err error) {
 	r, err = S3.PutObject(&s3.PutObjectInput{
-		Body:   blob,
-		Bucket: &BucketName,
-		Key:    &key,
+		Body:        blob,
+		Bucket:      &BucketName,
+		Key:         &key,
 		ContentType: &contentType,
 	})
 	return
 }
 
-func List() (files [] string) {
+func List() (files []string) {
 	params := &s3.ListObjectsInput{
 		Bucket: &BucketName,
 	}

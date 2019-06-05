@@ -13,23 +13,23 @@
 package newrelic
 
 import (
+	"fmt"
 	"github.com/gostones/goboot/config"
 	"github.com/gostones/goboot/logging"
 	"github.com/newrelic/go-agent"
 	"net/http"
-	"strings"
 	"reflect"
 	"runtime"
-	"fmt"
+	"strings"
 )
 
 var settings = config.AppSettings()
 var log = logging.Logger()
 
 type NewRelicEnv struct {
-	Enable  bool          `env:"goboot_newrelic.enable"`
-	Name    string        `env:"goboot_newrelic.name"`
-	License string        `env:"goboot_newrelic.license"`
+	Enable  bool   `env:"goboot_newrelic.enable"`
+	Name    string `env:"goboot_newrelic.name"`
+	License string `env:"goboot_newrelic.license"`
 }
 
 func init() {
@@ -66,10 +66,10 @@ func init() {
 
 var (
 	Application newrelic.Application
-	Config newrelic.Config
+	Config      newrelic.Config
 )
 
-func HandleFuncAdapter(handler func(http.ResponseWriter, *http.Request), name...string) func(http.ResponseWriter, *http.Request) {
+func HandleFuncAdapter(handler func(http.ResponseWriter, *http.Request), name ...string) func(http.ResponseWriter, *http.Request) {
 	var defaultName string
 	if len(name) == 0 {
 		defaultName = ""
@@ -90,7 +90,7 @@ func HandleFuncAdapter(handler func(http.ResponseWriter, *http.Request), name...
 	}
 }
 
-func funcAdapter(fn func(), name...string) func() (err error) {
+func funcAdapter(fn func(), name ...string) func() (err error) {
 	var defaultName string
 	if len(name) == 0 {
 		defaultName = ""
@@ -130,7 +130,7 @@ func nameOf(f interface{}) string {
 	return v.String()
 }
 
-func Trace(fn func(), name...string) (err error) {
+func Trace(fn func(), name ...string) (err error) {
 	err = funcAdapter(fn, name...)()
 	return
 }

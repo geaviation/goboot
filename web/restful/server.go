@@ -1,10 +1,10 @@
 package restful
 
 import (
-	"net/http"
+	"github.com/emicklei/go-restful"
 	"github.com/gostones/goboot/logging"
 	"github.com/gostones/goboot/web"
-	"github.com/emicklei/go-restful"
+	"net/http"
 )
 
 type RestfulServer struct {
@@ -28,7 +28,7 @@ func (r *RestfulServer) Serve() {
 
 	log.Infof("Server listening on port: %s", port)
 
-	log.Fatal(http.ListenAndServe(":" + port, nil))
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
 func HandlerAdapter(handler func(http.ResponseWriter, *http.Request)) restful.RouteFunction {
@@ -43,7 +43,7 @@ func (r *RestfulServer) home(res http.ResponseWriter, req *http.Request) {
 		Name      string `json:"name"`
 		Version   string `json:"version"`
 		Build     string `json:"build"`
-		Timestamp int64 `json:"timestamp"`
+		Timestamp int64  `json:"timestamp"`
 	}
 	n := r.Ctx.Env.GetStringEnv("VCAP_APPLICATION", "name")
 	v := r.Ctx.Env.GetStringEnv("VCAP_APPLICATION", "version")
@@ -63,4 +63,3 @@ func NewRestfulServer(router ...*restful.WebService) *RestfulServer {
 		return &RestfulServer{BasicServer: web.BasicServer{Ctx: ctx}, Router: router[0]}
 	}
 }
-

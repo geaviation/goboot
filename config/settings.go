@@ -31,16 +31,16 @@
 package config
 
 import (
-	"os"
-	"github.com/cloudfoundry-community/go-cfenv"
-	"strconv"
-	"sync"
 	"encoding/json"
 	"fmt"
+	"github.com/cloudfoundry-community/go-cfenv"
+	"os"
+	"strconv"
+	"sync"
 )
 
 type Settings struct {
-	Env   *cfenv.App
+	Env *cfenv.App
 
 	cache map[string]interface{} //cached env and uris
 
@@ -119,6 +119,12 @@ func (r Settings) GetService(names ...string) interface{} {
 	}
 
 	return nil
+}
+
+func (r *Settings) RedisService(a ...string) interface{} {
+	a = append(a, "aws-redis", "redis", "redis-1", "redis-11", "redis-13")
+	s := settings.GetService(a...)
+	return s
 }
 
 func (r Settings) PostgresUri(a ...string) string {
@@ -233,13 +239,13 @@ func NewSettings() *Settings {
 	env, _ := cfenv.Current()
 
 	return &Settings{
-		Env: env,
+		Env:   env,
 		cache: make(map[string]interface{}),
 	}
 }
 
 var (
-	settings = NewSettings()
+	settings    = NewSettings()
 	enableCache = true // set to false for testing
 )
 

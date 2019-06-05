@@ -10,20 +10,20 @@
 package blobstore
 
 import (
-	"github.com/gostones/goboot/config"
-	"github.com/gostones/goboot/logging"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/cloudfoundry-community/go-cfenv"
+	"github.com/gostones/goboot/config"
+	"github.com/gostones/goboot/logging"
 )
 
 var settings = config.AppSettings()
 var log = logging.Logger()
 
 type BlobstoreEnv struct {
-	Name string     `env:"goboot_blobstore.name"`
+	Name string `env:"goboot_blobstore.name"`
 }
 
 func init() {
@@ -40,9 +40,9 @@ func init() {
 }
 
 var (
-	Config aws.Config
-	Session *session.Session
-	S3 *s3.S3
+	Config     aws.Config
+	Session    *session.Session
+	S3         *s3.S3
 	BucketName string
 )
 

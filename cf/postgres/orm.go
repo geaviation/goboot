@@ -6,8 +6,8 @@
 package postgres
 
 import (
-	_ "github.com/lib/pq"
 	"github.com/go-xorm/xorm"
+	_ "github.com/lib/pq"
 )
 
 var engine *xorm.Engine

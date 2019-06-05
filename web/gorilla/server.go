@@ -2,9 +2,9 @@ package gorilla
 
 import (
 	"github.com/gorilla/mux"
-	"net/http"
 	"github.com/gostones/goboot/logging"
 	"github.com/gostones/goboot/web"
+	"net/http"
 )
 
 type GorillaServer struct {
@@ -26,7 +26,7 @@ func (r *GorillaServer) Serve() {
 
 	log.Infof("Server listening on port: %s", port)
 
-	log.Fatal(http.ListenAndServe(":" + port, r.Router))
+	log.Fatal(http.ListenAndServe(":"+port, r.Router))
 }
 
 func (r *GorillaServer) home(res http.ResponseWriter, req *http.Request) {
@@ -35,7 +35,7 @@ func (r *GorillaServer) home(res http.ResponseWriter, req *http.Request) {
 		Name      string `json:"name"`
 		Version   string `json:"version"`
 		Build     string `json:"build"`
-		Timestamp int64 `json:"timestamp"`
+		Timestamp int64  `json:"timestamp"`
 	}
 	n := r.Ctx.Env.GetStringEnv("VCAP_APPLICATION", "name")
 	v := r.Ctx.Env.GetStringEnv("VCAP_APPLICATION", "version")

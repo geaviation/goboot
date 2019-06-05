@@ -41,7 +41,7 @@ import (
 )
 
 const (
-	timeFormatS3 = time.RFC1123Z
+	timeFormatS3   = time.RFC1123Z
 	subresourcesS3 = "acl,lifecycle,location,logging,notification,partNumber,policy,requestPayment,torrent,uploadId,uploads,versionId,versioning,versions,website"
 )
 
@@ -72,7 +72,7 @@ func prepareRequestS3(request *http.Request) *http.Request {
 	}
 
 	urlParts := strings.Split(request.URL.Opaque, "/")
-	request.URL.Path = "/" + urlParts[len(urlParts) - 1]                   // gets the path
+	request.URL.Path = "/" + urlParts[len(urlParts)-1]                   // gets the path
 	request.URL.Path = strings.Replace(request.URL.Path, "%20", "+", -1) // the aws v2 signing method requires that spaces be encoded as "+"
 
 	request.Header.Set("x-amz-date", time.Now().UTC().Format(timeFormatS3))
