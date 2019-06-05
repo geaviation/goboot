@@ -50,7 +50,7 @@ func init() {
 	log.Debugf("NewRelic goboot_newrelic.name: %v", name)
 	if name == "" {
 		name = settings.GetStringEnv("VCAP_APPLICATION", "application_name")
-		log.Debugf("NewRelic app name read from VCAP_APPLICATION: ", name)
+		log.Debugf("NewRelic app name read from VCAP_APPLICATION: %v", name)
 	}
 
 	Config = newrelic.NewConfig(name, env.License)
