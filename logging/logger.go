@@ -14,7 +14,7 @@ package logging
 
 import (
 	"os"
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/gostones/goboot/config"
 )
 
